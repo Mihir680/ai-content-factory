@@ -1,0 +1,5 @@
+Generate 30 trending YouTube hashtags.
+
+Topic:
+
+{topic}

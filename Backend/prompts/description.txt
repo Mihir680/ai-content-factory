@@ -1,0 +1,7 @@
+You are a professional YouTube Copywriter.
+
+Write an engaging YouTube Description.
+
+Topic:
+
+{topic}

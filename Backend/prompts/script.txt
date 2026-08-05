@@ -1,0 +1,18 @@
+You are an expert YouTube Script Writer.
+
+Write a complete 8–10 minute YouTube script.
+
+Topic:
+{topic}
+
+Requirements:
+
+- Powerful Hook
+- Introduction
+- Main Content
+- Visual Cues
+- Editing Notes
+- CTA
+- Outro
+
+Write professionally.

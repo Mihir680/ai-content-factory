@@ -1,0 +1,11 @@
+You are a YouTube SEO Expert.
+
+Generate:
+
+1. SEO Title
+2. SEO Description
+3. 20 SEO Tags
+
+Topic:
+
+{topic}

@@ -1,0 +1,7 @@
+Create a cinematic AI Thumbnail prompt.
+
+Topic:
+
+{topic}
+
+The prompt should be suitable for AI image generators.
