@@ -5,6 +5,7 @@ import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import SummaryCard from "../components/SummaryCard";
 
+
 import toast from "react-hot-toast";
 
 import api from "../services/api";
@@ -15,23 +16,24 @@ import ResultCard from "../components/ResultCard";
 
 function Home() {
   const [topic, setTopic] = useState("");
-  const [history, setHistory] = useState<any[]>(() => {
-    useEffect(() => {
-  loadHistory();
-}, []);
+  const [history, setHistory] = useState<any[]>([]);
 
 const loadHistory = async () => {
   try {
     const res = await api.get("/history");
-    setHistory(res.data);
+
+    setHistory(Array.isArray(res.data) ? res.data : []);
+
   } catch (err) {
     console.log(err);
+    setHistory([]);
   }
 };
-  const saved = localStorage.getItem("history");
 
-  return saved ? JSON.parse(saved) : [];
-});
+useEffect(() => {
+  loadHistory();
+}, []);
+
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<any>(null);
 
@@ -48,48 +50,39 @@ const [length, setLength] = useState("5 Minutes");
       return;
     }
 
-    setLoading(true);
+  setLoading(true);
 
-    try {
-      const res = await api.post("/generate", {
-  topic,
-  language,
-  platform,
-  tone,
-  length,
-});
-
-      setData(res.data);
-
-      const newHistory = [
-  {
+try {
+  const { data } = await api.post("/generate", {
     topic,
-    data: res.data,
-    createdAt: new Date().toLocaleString(),
-  },
-  ...history,
-];
+    language,
+    platform,
+    tone,
+    length,
+  });
 
-setHistory(newHistory);
+  setData(data);
 
-localStorage.setItem(
-  "history",
-  JSON.stringify(newHistory)
-);
 
-      toast.success("Content Generated Successfully!");
-    } catch (err: any) {
-      console.error(err);
+setData(data);
 
-      toast.error(
-        err.response?.data?.detail ||
-          err.response?.data ||
-          err.message
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
+// Reload history from database
+await loadHistory();
+
+toast.success("Content Generated Successfully!");
+
+  toast.success("Content generated successfully!");
+} catch (err: any) {
+  console.error(err);
+
+  toast.error(
+    err.response?.data?.message ||
+      "Failed to generate content"
+  );
+} finally {
+  setLoading(false);
+}
+};
 
   const generateThumbnailPrompt = async () => {
     if (!topic.trim()) {
@@ -105,9 +98,14 @@ console.log(res.data.prompt);
 
       setThumbnailPrompt(res.data.prompt);
 
-      const imageUrl =
-        "https://image.pollinations.ai/prompt/" +
-        encodeURIComponent(res.data.prompt);
+      if (!res.data.prompt) {
+  toast.error("Prompt not generated");
+  return;
+}
+
+const imageUrl =
+  "https://image.pollinations.ai/prompt/" +
+  encodeURIComponent(res.data.prompt);
 
       setThumbnailImage(imageUrl);
 
@@ -367,23 +365,7 @@ const downloadZIP = async () => {
           </div>
 
         </div>
-<div className="mt-6 mb-6">
 
-  <label className="block mb-2 text-lg font-semibold">
-    🌐 Language
-  </label>
-
-  <select
-    value={language}
-    onChange={(e) => setLanguage(e.target.value)}
-    className="bg-slate-800 border border-slate-700 rounded-lg px-4 py-3"
-  >
-    <option>English</option>
-    <option>Hindi</option>
-    <option>Gujarati</option>
-  </select>
-
-</div>
 <div className="grid md:grid-cols-4 gap-4 mb-6">
 
   <div>
