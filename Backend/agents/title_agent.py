@@ -4,16 +4,15 @@ from Backend.services.gemini_service import generate_text
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-def generate_script(
+def generate_titles(
     topic,
     language="English",
     platform="YouTube",
     tone="Professional",
-    length="5 Minutes",
 ):
 
     prompt = (
-        BASE_DIR / "prompts" / "script.txt"
+        BASE_DIR / "prompts" / "title.txt"
     ).read_text(encoding="utf-8")
 
     prompt = prompt.format(
@@ -21,7 +20,6 @@ def generate_script(
         language=language,
         platform=platform,
         tone=tone,
-        length=length,
     )
 
     return generate_text(prompt)
