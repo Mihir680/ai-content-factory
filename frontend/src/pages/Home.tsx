@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import jsPDF from "jspdf";
 import { Document, Packer, Paragraph, TextRun } from "docx";
 import JSZip from "jszip";
@@ -16,6 +16,18 @@ import ResultCard from "../components/ResultCard";
 function Home() {
   const [topic, setTopic] = useState("");
   const [history, setHistory] = useState<any[]>(() => {
+    useEffect(() => {
+  loadHistory();
+}, []);
+
+const loadHistory = async () => {
+  try {
+    const res = await api.get("/history");
+    setHistory(res.data);
+  } catch (err) {
+    console.log(err);
+  }
+};
   const saved = localStorage.getItem("history");
 
   return saved ? JSON.parse(saved) : [];
@@ -329,9 +341,17 @@ const downloadZIP = async () => {
               <button
                 key={index}
                 onClick={() => {
-                setTopic(item.topic);
-                setData(item.data);
-              }}
+                  setTopic(item.topic);
+
+                  setData({
+                    script: item.script,
+                    seo: item.seo,
+                    description: item.description,
+                    hashtags: item.hashtags,
+                    thumbnail: item.thumbnail,
+                    titles: item.titles,
+                  });
+                }}
                 className="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg border border-slate-700"
               >
                 <div>
