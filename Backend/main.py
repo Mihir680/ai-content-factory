@@ -1,11 +1,14 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from Backend.api.history import router as history_router
+from Backend.api.voice import router as voice_router
 from Backend.api.thumbnail_image import router as thumbnail_image_router
 from Backend.api.research import router as research_router
 from Backend.api.script import router as script_router
 from Backend.api.seo import router as seo_router
 from Backend.api.generate import router as generate_router
+from Backend.api.scenes import router as scenes_router
+from Backend.api.video import router as video_router
 
 # Database
 from Backend.database.database import engine
@@ -32,6 +35,9 @@ app.include_router(thumbnail_image_router)
 app.include_router(generate_router)
 app.include_router(history_router)
 app.include_router(thumbnail_image_router)
+app.include_router(scenes_router)
+app.include_router(video_router)
+app.include_router(voice_router)
 
 @app.get("/")
 def home():
