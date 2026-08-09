@@ -41,9 +41,9 @@ def generate(req: GenerateRequest):
             tone=req.tone,
             length=req.length,
         )
-        print("✅ Script Generated")
+        print("[Script] Generated")
     except Exception as e:
-        print("❌ Script Error:", str(e))
+        print("[Script Error]", str(e))
         raise HTTPException(
             status_code=500,
             detail=f"Script Error: {str(e)}",
@@ -52,9 +52,9 @@ def generate(req: GenerateRequest):
     # SEO
     try:
         seo = generate_seo(req.topic)
-        print("✅ SEO Generated")
+        print("[SEO] Generated")
     except Exception as e:
-        print("❌ SEO Error:", str(e))
+        print("[SEO Error]", str(e))
         raise HTTPException(
             status_code=500,
             detail=f"SEO Error: {str(e)}",
@@ -63,9 +63,9 @@ def generate(req: GenerateRequest):
     # Description
     try:
         description = generate_description(req.topic)
-        print("✅ Description Generated")
+        print("[Description] Generated")
     except Exception as e:
-        print("❌ Description Error:", str(e))
+        print("[Description Error]", str(e))
         raise HTTPException(
             status_code=500,
             detail=f"Description Error: {str(e)}",
@@ -74,9 +74,9 @@ def generate(req: GenerateRequest):
     # Hashtags
     try:
         hashtags = generate_hashtags(req.topic)
-        print("✅ Hashtags Generated")
+        print("[Hashtags] Generated")
     except Exception as e:
-        print("❌ Hashtags Error:", str(e))
+        print("[Hashtags Error]", str(e))
         raise HTTPException(
             status_code=500,
             detail=f"Hashtags Error: {str(e)}",
@@ -85,9 +85,9 @@ def generate(req: GenerateRequest):
     # Thumbnail
     try:
         thumbnail = generate_thumbnail(req.topic)
-        print("✅ Thumbnail Generated")
+        print("[Thumbnail] Generated")
     except Exception as e:
-        print("❌ Thumbnail Error:", str(e))
+        print("[Thumbnail Error]", str(e))
         raise HTTPException(
             status_code=500,
             detail=f"Thumbnail Error: {str(e)}",
@@ -101,15 +101,15 @@ def generate(req: GenerateRequest):
             platform=req.platform,
             tone=req.tone,
         )
-        print("✅ Titles Generated")
+        print("[Titles] Generated")
     except Exception as e:
-        print("❌ Titles Error:", str(e))
+        print("[Titles Error]", str(e))
         raise HTTPException(
             status_code=500,
             detail=f"Titles Error: {str(e)}",
         )
 
-    print("🎉 All Content Generated Successfully")
+    print("[Success] All Content Generated Successfully")
 
     db = SessionLocal()
 
@@ -128,9 +128,10 @@ def generate(req: GenerateRequest):
             thumbnail=thumbnail,
             titles=titles,
         )
-        print("✅ Saved To Database")
+        print("[Database] Saved To Database")
     finally:
         db.close()
+
 
     return {
         "script": script,
@@ -140,3 +141,64 @@ def generate(req: GenerateRequest):
         "thumbnail": thumbnail,
         "titles": titles,
     }
+
+
+class PipelineRequest(BaseModel):
+    topic: str
+    language: str = "English"
+    platform: str = "YouTube"
+    tone: str = "Professional"
+    length: str = "5 Minutes"
+    visual_style: str = "real"
+    auto_upload: bool = False
+    privacy_status: str = "private"
+
+
+@router.post("/generate-pipeline")
+def generate_pipeline(req: PipelineRequest):
+    from Backend.agents.pipeline_agent import run_full_pipeline
+
+    try:
+        result = run_full_pipeline(
+            topic=req.topic,
+            language=req.language,
+            platform=req.platform,
+            tone=req.tone,
+            length=req.length,
+            visual_style=req.visual_style,
+            auto_upload=req.auto_upload,
+            privacy_status=req.privacy_status,
+        )
+        return {"status": "success", "result": result}
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Pipeline Error: {str(e)}",
+        )
+
+
+class ManualUploadRequest(BaseModel):
+    video_path: str
+    title: str
+    description: str
+    privacy_status: str = "private"
+
+
+@router.post("/upload-youtube")
+def manual_upload_youtube(req: ManualUploadRequest):
+    from Backend.services.youtube_uploader import upload_video
+    try:
+        res = upload_video(
+            video_path=req.video_path,
+            title=req.title,
+            description=req.description,
+            privacy_status=req.privacy_status,
+        )
+        return {"status": "success", "upload_result": res}
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"YouTube Upload Error: {str(e)}"
+        )
+

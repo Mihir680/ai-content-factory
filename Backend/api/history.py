@@ -12,8 +12,9 @@ def get_history():
     db: Session = SessionLocal()
 
     try:
-        history = db.query(Content).order_by(Content.id.desc()).all()
+        history = db.query(Content).order_by(Content.id.desc()).limit(5).all()
         return history
+
 
     finally:
         db.close()

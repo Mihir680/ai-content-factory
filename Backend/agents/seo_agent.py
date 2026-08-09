@@ -1,13 +1,10 @@
 from pathlib import Path
 from Backend.services.gemini_service import generate_text
 
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 
 def generate_seo(topic):
-
-    prompts = Path(
-        "Backend/prompts/seo.txt"
-    ).read_text(encoding="utf-8")
-
+    prompts = (BASE_DIR / "prompts" / "seo.txt").read_text(encoding="utf-8")
     prompts = prompts.format(topic=topic)
-
     return generate_text(prompts)

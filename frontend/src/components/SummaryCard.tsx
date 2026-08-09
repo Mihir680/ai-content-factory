@@ -4,6 +4,7 @@ type Props = {
   platform: string;
   tone: string;
   length: string;
+  visualStyle?: string;
 };
 
 function SummaryCard({
@@ -12,6 +13,7 @@ function SummaryCard({
   platform,
   tone,
   length,
+  visualStyle = "real",
 }: Props) {
   return (
     <div className="bg-slate-800 border border-slate-700 rounded-xl p-6">
@@ -32,10 +34,12 @@ function SummaryCard({
 
         <p><strong>Length:</strong> {length}</p>
 
+        <p><strong>Visual Style:</strong> {visualStyle === "animation" ? "🎨 3D Animation & Cartoon" : "📸 Real Photography (Google 8K Real Photo)"}</p>
+
       </div>
 
     </div>
   );
 }
 
-export default SummaryCard;
+export default SummaryCard;

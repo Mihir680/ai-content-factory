@@ -10,6 +10,8 @@ from Backend.api.generate import router as generate_router
 from Backend.api.scenes import router as scenes_router
 from Backend.api.video import router as video_router
 
+from fastapi.staticfiles import StaticFiles
+
 # Database
 from Backend.database.database import engine
 from Backend.database.models import Base
@@ -19,13 +21,16 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
+app.mount("/media", StaticFiles(directory="Backend/media"), name="media")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=["http://localhost:5173", "http://localhost:3000", "*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 app.include_router(research_router)
 app.include_router(script_router)
